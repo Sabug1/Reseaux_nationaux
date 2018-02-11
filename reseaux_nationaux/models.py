@@ -1,6 +1,5 @@
 from django.db import models
-
-# Create your models here.
+from django.contrib.auth.models import User
 
 class CNPE(models.Model):
     nom = models.CharField(max_length=200)
@@ -24,11 +23,13 @@ class Metier(models.Model):
         return self.nom
 
 class Personne(models.Model):
-    cnpe = models.ForeignKey(CNPE, on_delete=models.CASCADE)
+    #vient de django et gère les mdp
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    #vient de nous
+    cnpe = models.ForeignKey(CNPE, on_delete=models.SET_NULL, null=True)
     reseaux = models.ManyToManyField(Reseau)
-    nom = models.CharField(max_length=200)
-    prenom = models.CharField(max_length=200)
     telephone = models.CharField(max_length=200)
-    mail = models.CharField(max_length=200)
+    metier = models.ForeignKey(Metier, on_delete=models.PROTECT)
     def __str__(self):
-        return self.nom + ' ' + self.prenom
+        return self.user.first_name + ' ' + self.user.last_name
